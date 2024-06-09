@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cy.plugin.controller.dao.SysLogDao">
+    <sql id="queryWhereId">
+        from sys_logs
+            <where>
+            <if test="userName!=null and userName!=''">
+                 username like concat("%",#{userName},"%")
+            </if>
+         </where>
+    </sql>
+
+    <select id = "gerRowCountByName" resultType="int">
+            select count(*)
+            <include refid="queryWhereId"/>
+    </select>
+
+    <select id="doFindPageObjects" resultType="com.cy.plugin.pojo.SysLog">
+        select *
+            <include refid="queryWhereId"/>
+                order by createdTime desc
+                limit #{startIndex},#{pageSize}
+    </select>
+
+    <update id="doDeletePageObjects">
+        delete from sys_Logs
+        <where>
+            <if test="ids!=null or ids.length>0">
+                id in
+                <foreach collection="ids" open="(" close=")" item="id" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <insert id = "addPageObject">
+        insert into sys_Logs(username,operation,method,params,time,ip,createdTime)
+        values
+        (#{username},#{operation},#{meghod},#{params},#{time},#{ip},#{createdTime})
+    </insert>
+
+
+</mapper>

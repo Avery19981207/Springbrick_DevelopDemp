@@ -1,0 +1,64 @@
+<ul class="pagination pagination-sm no-margin pull-right">
+    <li><a class="first">首页</a></li>
+	<li><a class="pre">上一页</a></li>
+	<li><a class="next">下一页</a></li>
+	<li><a class="last">尾页</a></li>
+	<li><a class="rowCount">总记录数(0)</a></li>
+	<li><a class="pageCount">总页数(0)</a></li>
+	<li><a class="pageCurrent">当前页(1)</a></li>
+</ul>
+<script type="text/javascript">
+$(function(){
+	$("#pageId")
+	.on("click",".first,.pre,.next,.last",doJumpToPage)
+})
+//初始化分页信息
+function doSetPagination(page){//pageObject {rowCount:10,pageCount:3,...}
+	   //1.初始化总记录数;
+	   $(".rowCount").html("总记录数("+page.rowCount+")");
+	   //2.初始化总页数
+	   $(".pageCount").html("总页数("+page.pageCount+")");
+	   //3.初始化当前页码值
+	   $(".pageCurrent").html("当前页("+page.pageCurrent+")");
+	  //4.存储page信息到指定对象上。
+	  //data函数为jquery中的一个数据绑定函数，其语法为data(key[,value]);,假如只有key表示取值，两个都有表示值的绑定
+	   $("#pageId").data("pageCurrent",page.pageCurrent);
+	   $("#pageId").data("pageCount",page.pageCount);
+}
+//处理分页点击事件
+function doJumpToPage(){
+	//debugger
+	//1.获得被点击对象的class属性值，基于此值判定被点击的对象
+	//prop 函数为jquery中用于获取class属性值的一个函数，其语法为prop(key[,value]);
+	var cls=$(this).prop("class");
+    //2.基于class属性值，修改当前页码值
+    //2.1获得当前页码值，获得总页数
+    var pageCurrent=$("#pageId").data("pageCurrent");
+    var pageCount=$("#pageId").data("pageCount");
+    //2.2修改当前页码值，并存储(其它地方用到了可以获取)
+    //2.2.1修改当前页码值
+    if(cls=="first"){
+    	pageCurrent=1;
+    }else if(cls=="pre"&&pageCurrent>1){//上一页
+    	pageCurrent--;
+    }else if(cls=="next"&&pageCurrent<pageCount){
+    	pageCurrent++;
+    }else if(cls=="last"){
+    	pageCurrent=pageCount;
+    }else{
+    	return;
+    }
+    //2.2.2 存储当前页码值
+    $("#pageId").data("pageCurrent",pageCurrent);
+    //3.基于新页码值进行新的查询
+    doGetObjects();
+}
+</script>
+
+
+
+
+
+
+
+

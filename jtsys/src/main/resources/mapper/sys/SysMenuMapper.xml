@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cy.controller.dao.SysMenuDao">
+
+    <select id="findObjects" resultType="map">
+        select a.*,(
+            select b.name from sys_menus b
+                          where a.parentId = b.id
+            )parentName
+        from sys_menus a
+    </select>
+
+    <delete id="deleteObject">
+        delete from sys_menus
+            <where>
+                id = ${id}
+            </where>
+    </delete>
+
+    <select id="getChildCount" resultType="int" parameterType="int">
+        select count(*) from sys_menus
+            <where>
+                parentId = #{id}
+            </where>
+    </select>
+
+    <select id="findZtreeMenuNodes" resultType="com.cy.pojo.Node">
+        select id,name,parentId
+            from sys_menus
+    </select>
+
+    <insert id="insertObject"
+            parameterType="com.cy.pojo.SysMenu">
+        insert into sys_menus
+        (name,url,type,sort,note,parentId,permission,
+         createdTime,modifiedTime,createdUser,modifiedUser)
+        values
+            (#{name},#{url},#{type},#{sort},#{note},#{parentId},
+             #{permission},now(),now(),#{createdUser},#{modifiedUser})
+    </insert>
+
+    <update id="updateObject" parameterType="com.cy.pojo.SysMenu">
+        update sys_menus set
+            name=#{name},
+            type=#{type},
+            sort=#{sort},
+            url=#{url},
+            parentId=#{parentId},
+            permission=#{permission},
+            modifiedUser=#{modifiedUser},
+            modifiedTime=now()
+        where id=#{id}
+    </update>
+
+
+
+
+</mapper>

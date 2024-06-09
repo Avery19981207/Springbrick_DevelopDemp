@@ -1,0 +1,46 @@
+#server
+server:
+  port: 80
+  servlet:
+    address: localhost
+  tomcat:
+    max-threads: 1000
+#spring
+spring:
+  datasource:
+    url: jdbc:mysql:///jtsys?serverTimezone=GMT
+    username: root
+    password: avery1207
+  thymeleaf:
+    prefix: classpath:/templates/pages/
+    suffix: .html
+  servlet:
+    multipart:
+      #上传一个文件最大值  默认是1MB
+      max-file-size: 1000MB
+      #上传多个文件最大值  默认是10MB
+      max-request-size: 100MB
+
+#mybatis
+mybatis:
+  configuration:
+    default-statement-timeout: 30
+    map-underscore-to-camel-case: true
+  mapper-locations:
+  - classpath:/mapper/*/*.xml
+#lOG
+logging:
+  level:
+    com.cy: DEBUG
+
+plugin:
+  # 运行模式, 开发环境: dev; 生产环境: prod
+  runMode: prod
+  # 主程序包名, 包名建议设置到范围最大级别，能包含主程序所有类的包名范围
+  mainPackage: com.cy
+  # 插件的路径, 可配置多个, 开发环境下配置为插件模块上级目录; 生产环境下配置到插件jar包存放目录。
+  # 可使用~符号表示相对目录，比如：~/plugins，开发环境相对于开发根目录，生产环境下相对于主程序jar所在目录
+  pluginPath:
+    - /Users/avery/Ai-Trust_learning_logs/plugins/
+
+

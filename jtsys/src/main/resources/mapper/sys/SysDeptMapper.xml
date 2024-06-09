@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cy.controller.dao.SysDeptDao">
+    <select id="findObjects" resultType="map">
+        select a.*,(
+            select b.name from sys_depts b
+            where a.parentId = b.id
+        )parentName
+        from sys_depts a
+    </select>
+
+
+    <delete id="deleteObject">
+        delete from sys_depts
+        <where>
+            id = ${id}
+        </where>
+    </delete>
+
+    <select id="getChildCount" resultType="int" parameterType="int">
+        select count(*) from sys_depts
+        <where>
+            parentId = #{id}
+        </where>
+    </select>
+
+    <select id="findZtreeMenuNodes" resultType="com.cy.pojo.Node">
+        select id,name,parentId
+        from sys_depts
+    </select>
+
+    <insert id="insertObject"
+            parameterType="com.cy.pojo.SysDept">
+        insert into sys_depts
+        (name,parentId,sort,note)
+        values
+            (#{name},#{parentId},#{sort},#{note})
+    </insert>
+
+    <update id="updateObject" parameterType="com.cy.pojo.SysDept">
+        update sys_depts set
+                             name=#{name},
+                             sort=#{sort},
+                             note=#{note},
+                             parentId=#{parentId},
+                             modifiedUser=#{modifiedUser},
+                             modifiedTime=now()
+        where id=#{id}
+    </update>
+
+    <select id="findById" resultType="com.cy.pojo.SysDept">
+        select * from sys_depts where id=#{id}
+    </select>
+
+
+
+
+
+</mapper>

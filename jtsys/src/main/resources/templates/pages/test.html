@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件上传</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>文件上传</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+  <input type="file" id="fileInput" name="file" required>
+  <button type="submit">上传文件</button>
+</form>
+
+<script>
+  $(document).ready(function() {
+    $('#uploadForm').on('submit', function(event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      $.ajax({
+        url: '/plugin/upload', // 请根据实际情况修改上传URL
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+          alert('文件上传成功');
+        },
+        error: function(error) {
+          alert('文件上传失败');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

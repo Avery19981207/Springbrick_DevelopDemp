@@ -1,0 +1,24 @@
+#spring
+spring:
+  datasource:
+    url: jdbc:mysql:///jtsys?serverTimezone=GMT
+    username: root
+    password: avery1207
+  servlet:
+    multipart:
+      #上传一个文件最大值  默认是1MB
+      max-file-size: 1000MB
+      #上传多个文件最大值  默认是10MB
+      max-request-size: 100MB
+
+#mybatis
+mybatis:
+  configuration:
+    default-statement-timeout: 30
+    map-underscore-to-camel-case: true
+  mapper-locations:
+    - classpath:/mapper/*/*.xml
+
+
+
+

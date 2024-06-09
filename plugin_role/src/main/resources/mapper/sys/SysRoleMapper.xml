@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cy.plugin.controller.dao.SysRoleDao">
+    <sql id="queryWhereId">
+        from sys_roles
+            <where>
+            <if test="name!=null and name!=''">
+                 name like concat("%",#{name},"%")
+            </if>
+         </where>
+    </sql>
+
+    <select id = "getRowCount" resultType="int">
+            select count(*)
+            <include refid="queryWhereId"/>
+    </select>
+
+    <select id="findPageObjects" resultType="com.cy.plugin.pojo.SysRole">
+        select *
+            <include refid="queryWhereId"/>
+                order by createdTime desc
+                limit #{pageIndex},#{pageSize}
+    </select>
+
+    <delete id="deleteObjectByRoleId" parameterType="int">
+        delete from sys_roles
+        <where>
+            id=#{roleId}
+        </where>
+    </delete>
+
+    <insert id="insertObject" parameterType="com.cy.plugin.pojo.SysRole"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into sys_roles(id,name,note,createdTime,modifiedTime,
+         createdUser,modifiedUser)
+        values  (null,#{name},#{note},now(),now(),#{createdUser},#{modifiedUser})
+    </insert>
+
+
+    <resultMap type="com.cy.common.vo.SysRoleMenuVo"
+               id="sysRoleMenuVo">
+        <!-- 假如基于id做再次执行查询，又希望将id值存储到值对象，
+                           可以对id进行专门映射 -->
+        <id property="id" column="id"/>
+        <!-- collection一般应用于one2many查询 -->
+        <collection property="menuIds"
+                    select="com.cy.controller.dao.SysRoleMenuDao.findMenuIdsByRoleId"
+                    column="id">
+        </collection>
+    </resultMap>
+    <select id="findObjectById"
+            resultMap="sysRoleMenuVo">
+        select id,name,note
+        from sys_roles
+        where id=#{id}
+    </select>
+
+    <update id="updateObject"
+            parameterType="com.cy.plugin.pojo.SysRole">
+        update sys_roles set
+            name=#{name},
+            note=#{note},
+            modifiedUser=#{modifiedUser},
+            modifiedTime=now()
+        where id=#{id}
+    </update>
+
+
+
+</mapper>
