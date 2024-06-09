@@ -149,12 +149,7 @@ localhost:80/doPageUI
 ### 插件管理接口
 
 在项目中，我们编写PluginManageController类，自定义了插件注册信息、插件热部署、插件卸载、停用的功能。此优化方案实现项目业务的热部署化更新，用于尝尝需要添加定制化小功能的场景。
-插件化开发优势：
-  动态扩展：通过插件机制，可以在不修改核心系统代码的情况下，动态地添加或移除功能模块，增强了系统的可扩展性。
-  多样化功能：可以根据需要开发和部署不同的插件，实现多样化的功能扩展，满足不同用户的需求。
-  松耦合设计：插件化开发将核心功能与扩展功能分离，核心模块和插件模块之间的依赖关系较少，降低了模块间的耦合度。
-  易于维护：模块化设计使得代码结构清晰，每个插件模块可以独立开发、测试和维护，减少了代码的复杂度和维护成本。
-  独立开发：插件可作为独立的项目进行独立开发。
+**
   
 ### 示例代码
 
@@ -283,3 +278,48 @@ public class PluginManageController {
 
 }
 ```
+
+## 常见问题
+该框架最大的问题在于**依赖冲突**，经过实验整理了以下问题：
+ **1.插件需要排除spring-boot-start-web依赖，否则加载插件失败。**
+ **2.插件引用主程序代码需要用provided模式，否则会连通依赖的主程序代码一同编译打包，在加载时出现关于cglibi的类加载冲突异常。**
+**3.插件中bean对象进行依赖注入时，不从主程序获取依赖注入，会报NoSuchBeanDefinitionException异常**
+
+### 依赖冲突
+
+使用 **Spring-brick** 框架时，可能会遇到以下依赖冲突问题：
+
+1. **插件需要排除 `spring-boot-starter-web` 依赖**：否则加载插件失败。
+   
+   解决方案：在插件的 `pom.xml` 中，排除 `spring-boot-starter-web` 依赖。
+
+   ```xml
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-web</artifactId>
+       <exclusions>
+           <exclusion>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-starter-tomcat</artifactId>
+           </exclusion>
+       </exclusions>
+   </dependency>
+   ```
+
+2. **插件引用主程序代码需要用 `provided` 模式**：否则会连同依赖的主程序代码一同编译打包，在加载时出现关于 `cglib` 的类加载冲突异常。
+   
+   解决方案：在插件的 `pom.xml` 中，将主程序的依赖设置为 `provided`。
+
+   ```xml
+   <dependency>
+       <groupId>com.cy</groupId>
+       <artifactId>main-app</artifactId>
+       <version>1.0.0</version>
+       <scope>provided</scope>
+   </dependency>
+   ```
+
+3. **插件中 Bean 对象进行依赖注入时，不从主程序获取依赖注入**：会报 `NoSuchBeanDefinitionException` 异常。
+   
+   解决方案：确保插件中的 Bean 对象可以从主程序获取依赖注入，或在插件中定义所需的依赖。
+
